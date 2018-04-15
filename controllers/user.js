@@ -26,30 +26,19 @@ function saveUser(req, res) {
 			if (user.name != null && user.surname != null && user.email != null) {
 				user.save((err, userStored) => {
 					if (err) {
-						res.status(500).send({
-							message: 'Error al guardar el usuario '
-						});
+						res.status(500).send({message: 'Error al guardar el usuario '});
 					} else if (!userStored) {
-						res.status(404).send({
-							message: 'No se ha registrado el usuario '
-						});
+						res.status(404).send({message: 'No se ha registrado el usuario '});
 					} else {
-						res.status(200).send({
-							user: userStored
-
-						});
+						res.status(200).send({user: userStored});
 					}
 				});
 			} else {
-				res.status(200).send({
-					message: 'Ingrese todos los campos'
-				});
+				res.status(200).send({message: 'Ingrese todos los campos'});
 			}
 		});
 	} else {
-		res.status(200).send({
-			message: 'Ingrese la contraseña'
-		});
+		res.status(200).send({message: 'Ingrese la contraseña'});
 	}
 }
 
@@ -63,13 +52,9 @@ function loginUser(req, res) {
 		email: email.toLowerCase()
 	}, (err, user) => {
 		if (err) {
-			res.status(500).send({
-				message: 'Error en la petición'
-			});
+			res.status(500).send({message: 'Error en la petición'});
 		} else if (!user) {
-			res.status(404).send({
-				message: 'El usuario no existe'
-			});
+			res.status(404).send({message: 'El usuario no existe'});
 		} else {
 			//comprobar la contraseña
 			bcrypt.compare(password, user.password, function(err, check) {
@@ -77,18 +62,12 @@ function loginUser(req, res) {
 					//devolver datos usuario logueado
 					if (params.gethash) {
 						//devolver un token de jwt
-						res.status(200).send({
-							token: jwt.createToken(user)
-						});
+						res.status(200).send({token: jwt.createToken(user)});
 					} else {
-						res.status(200).send({
-							user
-						});
+						res.status(200).send({user});
 					}
 				} else {
-					res.status(404).send({
-						message: 'El usuario no ha podido loguearse'
-					});
+					res.status(404).send({message: 'El usuario no ha podido loguearse'});
 				}
 			});
 		}
@@ -101,19 +80,13 @@ function updateUser(req, res) {
 
 	User.findByIdAndUpdate(userID, update, (err, userUpdated) => {
 		if (err) {
-			res.status(500).send({
-				message: 'Error al actualizar al usuario.'
-			});
+			res.status(500).send({message: 'Error al actualizar al usuario.'});
 
 		} else if (!userUpdated) {
-			res.status(404).send({
-				message: 'No se ha podido actualizar el usuario.'
-			});
+			res.status(404).send({message: 'No se ha podido actualizar el usuario.'});
 
 		} else {
-			res.status(200).send({
-				user: userUpdated
-			});
+			res.status(200).send({user: userUpdated});
 		}
 	});
 }
@@ -130,42 +103,31 @@ function uploadImage(req, res) {
 		var ext_split = file_name.split('\.');
 		var file_ext = ext_split[1];
 
-		if (file_ext == 'png' || file_ext == 'jpg' ||
-			file_ext == 'gif') {
+		if (file_ext == 'png' || file_ext == 'jpg' || file_ext == 'gif') {
 
 			User.findByIdAndUpdate(userID, {
 				image: file_name
 			}, (err, userUpdated) => {
 
 				if (err) {
-					res.status(500).send({
-						message: 'Error al actualizar al usuario.'
-					});
+					res.status(500).send({message: 'Error al actualizar al usuario.'});
 
 				} else if (!userUpdated) {
-					res.status(404).send({
-						message: 'No se ha podido actualizar el usuario.'
-					});
+					res.status(404).send({message: 'No se ha podido actualizar el usuario.'});
 
 				} else {
-					res.status(200).send({
-						user: userUpdated
-					});
+					res.status(200).send({user: userUpdated});
 				}
 			});
 
 		} else {
-			res.status(200).send({
-				message: 'Extensión del archivo no valida.'
-			});
+			res.status(200).send({message: 'Extensión del archivo no valida.'});
 		}
 
 		console.log(ext_split);
 
 	} else {
-		res.status(200).send({
-			message: 'No ha subido ninguna imagen.'
-		});
+		res.status(200).send({message: 'No ha subido ninguna imagen.'});
 	}
 }
 
@@ -177,9 +139,7 @@ function getImageFile(req, res) {
 		if (exists) {
 			res.sendFile(path.resolve(path_file));
 		} else {
-			res.status(200).send({
-				message: 'No existe la imagen...'
-			});
+			res.status(200).send({message: 'No existe la imagen...'});
 		}
 	});
 }
