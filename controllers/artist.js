@@ -8,6 +8,9 @@ var jwt = require("../services/jwt");
 
 var Artist = require("../models/artist");
 
+var Album = require("../models/album");
+var Song = require("../models/song");
+
 // funcion que obtiene el artista con su ID
 function getArtist(req, res) {
 	var artistID = req.params.id;
