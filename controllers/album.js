@@ -49,6 +49,25 @@ function getAlbums(req, res) {
 	});
 }
 
+function updateAlbum(req, res) {
+
+	var albumID = req.params.id;
+	var update = req.body;
+
+	Album.findByIdAndUpdate(albumID, update, (err, albumUpdate) => {
+		if (err) {
+			res.status(500).send({message: "Error en la petición"});
+
+		} else if (!albumUpdate) {
+			res.status(404).send({message: "Album not found"});
+
+		} else {
+			res.status(200).send({albumUpdate});
+		}
+	});
+
+}
+
 function saveAlbum(req, res) {
 	var album = new Album()
 
@@ -75,5 +94,6 @@ function saveAlbum(req, res) {
 module.exports = {
 	getAlbum,
 	saveAlbum,
-	getAlbums
+	getAlbums,
+	updateAlbum
 };
