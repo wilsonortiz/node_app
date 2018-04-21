@@ -75,8 +75,28 @@ function saveSong(req, res) {
 	});
 }
 
+function updateSong(req, res) {
+	var songID = req.params.id;
+	var update = req.body;
+
+	Song.findByIdAndUpdate(songID, update, (err, songUpdated) => {
+		if (err) {
+			res.status(500).send({message: "Internal server error"});
+
+		} else if (!songUpdated) {
+			res.status(404).send({message: "Song not found"});
+
+		} else {
+			res.status(200).send({song: songUpdated});
+		}
+
+	});
+
+}
+
 module.exports = {
 	getSong,
 	saveSong,
-	getSongs
+	getSongs,
+	updateSong
 }
