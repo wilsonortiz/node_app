@@ -89,7 +89,6 @@ function updateSong(req, res) {
 		} else {
 			res.status(200).send({song: songUpdated});
 		}
-
 	});
 
 }
