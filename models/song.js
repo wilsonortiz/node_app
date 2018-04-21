@@ -1,17 +1,16 @@
-	'use strict'
+'use strict'
 
-	var mongoose = require('mongoose');
-	var Schema = mongoose.Schema;
+var mongoose = require('mongoose');
+var Schema = mongoose.Schema;
+var SongSchema = mongoose.Schema({
+	number: String,
+	name: String,
+	duration: String,
+	file: String,
+	album: {
+		type: Schema.ObjectId,
+		ref: 'Album'
+	}
+});
 
-	var SongSchema = Schema({
-	  number: String,
-	  name: String,
-	  duration: String,
-	  file: String,
-	  album: {
-	    type: Schema.OjectId,
-	    ref: 'Album'
-	  }
-	});
-
-	module.exports = mongoose.model('Song', SongSchema);
+module.exports = mongoose.model('Song', SongSchema);
