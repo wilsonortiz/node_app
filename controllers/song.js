@@ -25,6 +25,33 @@ function getSong(req, res) {
 	});
 }
 
+function getSongs(req, res) {
+	var albumID = req.params.album;
+
+	if (!albumID) {
+		var find = Song.find({}).sort('number');
+
+	} else {
+		var find = Song.find({album: albumID}).sort('number');
+	}
+	find.populate({
+		path: 'album',
+		populate: {
+			path: 'artist',
+			model: 'Artist'
+		}
+
+	}).exec(function(err, song) {
+		if (err) {
+			res.status(500).send({message: "Error en la petición"});
+		} else if (!song) {
+			res.status(404).send({message: "No hay canciones"});
+		} else {
+			res.status(200).send({song});
+		}
+	});
+}
+
 function saveSong(req, res) {
 	var song = new Song()
 
@@ -50,5 +77,6 @@ function saveSong(req, res) {
 
 module.exports = {
 	getSong,
-	saveSong
+	saveSong,
+	getSongs
 }
