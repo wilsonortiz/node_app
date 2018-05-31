@@ -74,7 +74,7 @@ function updateArtist(req, res) {
 		} else if (!artistUpdate) {
 			res.status(404).send({message: "No se ha podido actualizar el artista."});
 		} else {
-			res.status(200).send({artista: artistUpdate});
+			res.status(200).send({artist: artistUpdate});
 		}
 	});
 }

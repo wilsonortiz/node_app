@@ -16,29 +16,29 @@ function saveUser(req, res) {
 	user.name = params.name;
 	user.surname = params.surname;
 	user.email = params.email;
-	user.role = 'ROLE_ADMIN';
+	user.role = params.role;
 	user.image = 'null';
 
-	if (params.password) {
+	if(params.password) {
 		//encriptar contraseña
 		bcrypt.hash(params.password, null, null, function(err, hash) {
 			user.password = hash;
-			if (user.name != null && user.surname != null && user.email != null) {
+			if(user.name != null && user.surname != null && user.email != null) {
 				user.save((err, userStored) => {
-					if (err) {
-						res.status(500).send({message: 'Error al guardar el usuario '});
-					} else if (!userStored) {
-						res.status(404).send({message: 'No se ha registrado el usuario '});
+					if(err) {
+						res.status(500).send({ message: 'Error al guardar el usuario ' });
+					} else if(!userStored) {
+						res.status(404).send({ message: 'No se ha registrado el usuario ' });
 					} else {
-						res.status(200).send({user: userStored});
+						res.status(200).send({ user: userStored });
 					}
 				});
 			} else {
-				res.status(200).send({message: 'Ingrese todos los campos'});
+				res.status(200).send({ message: 'Ingrese todos los campos' });
 			}
 		});
 	} else {
-		res.status(200).send({message: 'Ingrese la contraseña'});
+		res.status(200).send({ message: 'Ingrese la contraseña' });
 	}
 }
 
@@ -51,23 +51,23 @@ function loginUser(req, res) {
 	User.findOne({
 		email: email.toLowerCase()
 	}, (err, user) => {
-		if (err) {
-			res.status(500).send({message: 'Error en la petición'});
-		} else if (!user) {
-			res.status(404).send({message: 'El usuario no existe'});
+		if(err) {
+			res.status(500).send({ message: 'Error en la petición' });
+		} else if(!user) {
+			res.status(404).send({ message: 'El usuario no existe' });
 		} else {
 			//comprobar la contraseña
 			bcrypt.compare(password, user.password, function(err, check) {
-				if (check) {
+				if(check) {
 					//devolver datos usuario logueado
-					if (params.gethash) {
+					if(params.gethash) {
 						//devolver un token de jwt
-						res.status(200).send({token: jwt.createToken(user)});
+						res.status(200).send({ token: jwt.createToken(user) });
 					} else {
-						res.status(200).send({user});
+						res.status(200).send({ user });
 					}
 				} else {
-					res.status(404).send({message: 'El usuario no ha podido loguearse'});
+					res.status(404).send({ message: 'El usuario no ha podido loguearse' });
 				}
 			});
 		}
@@ -78,15 +78,20 @@ function updateUser(req, res) {
 	var userID = req.params.id;
 	var update = req.body;
 
-	User.findByIdAndUpdate(userID, update, (err, userUpdated) => {
-		if (err) {
-			res.status(500).send({message: 'Error al actualizar al usuario.'});
+	if(userID != req.user.sub) {
+		return res.status(500).send({ message: 'No tiene permisos para actualizar este usuario' });
 
-		} else if (!userUpdated) {
-			res.status(404).send({message: 'No se ha podido actualizar el usuario.'});
+	}
+
+	User.findByIdAndUpdate(userID, update, (err, userUpdated) => {
+		if(err) {
+			res.status(500).send({ message: 'Error al actualizar al usuario.' });
+
+		} else if(!userUpdated) {
+			res.status(404).send({ message: 'No se ha podido actualizar el usuario.' });
 
 		} else {
-			res.status(200).send({user: userUpdated});
+			res.status(200).send({ user: userUpdated });
 		}
 	});
 }
@@ -95,7 +100,7 @@ function uploadImage(req, res) {
 	var userID = req.params.id;
 	var file_name = 'No subido...'
 
-	if (req.files) {
+	if(req.files) {
 		var file_path = req.files.image.path;
 		var file_split = file_path.split('\\');
 		var file_name = file_split[2];
@@ -103,31 +108,31 @@ function uploadImage(req, res) {
 		var ext_split = file_name.split('\.');
 		var file_ext = ext_split[1];
 
-		if (file_ext == 'png' || file_ext == 'jpg' || file_ext == 'gif') {
+		if(file_ext == 'png' || file_ext == 'jpg' || file_ext == 'gif') {
 
 			User.findByIdAndUpdate(userID, {
 				image: file_name
 			}, (err, userUpdated) => {
 
-				if (err) {
-					res.status(500).send({message: 'Error al actualizar al usuario.'});
+				if(err) {
+					res.status(500).send({ message: 'Error al actualizar al usuario.' });
 
-				} else if (!userUpdated) {
-					res.status(404).send({message: 'No se ha podido actualizar el usuario.'});
+				} else if(!userUpdated) {
+					res.status(404).send({ message: 'No se ha podido actualizar el usuario.' });
 
 				} else {
-					res.status(200).send({image: file_name, user: userUpdated});
+					res.status(200).send({ image: file_name, user: userUpdated });
 				}
 			});
 
 		} else {
-			res.status(200).send({message: 'Extensión del archivo no valida.'});
+			res.status(200).send({ message: 'Extensión del archivo no valida.' });
 		}
 
 		console.log(ext_split);
 
 	} else {
-		res.status(200).send({message: 'No ha subido ninguna imagen.'});
+		res.status(200).send({ message: 'No ha subido ninguna imagen.' });
 	}
 }
 
@@ -136,10 +141,10 @@ function getImageFile(req, res) {
 	var path_file = './uploads/users/' + imageFile;
 
 	fs.exists(path_file, function(exists) {
-		if (exists) {
+		if(exists) {
 			res.sendFile(path.resolve(path_file));
 		} else {
-			res.status(200).send({message: 'No existe la imagen...'});
+			res.status(200).send({ message: 'No existe la imagen...' });
 		}
 	});
 }
